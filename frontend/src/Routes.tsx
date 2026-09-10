@@ -5,14 +5,14 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 const Routes = () => {
     return (
         <BrowserRouter>
-            <switch>
+            <Switch>
                 <Route path="/" exact>
                     <Home/>
                 </Route>
                 <Route path="/dashboard" exact>
                     <Dashboard/>
                 </Route>
-            </switch>
+            </Switch>
         </BrowserRouter>
     );
 }
