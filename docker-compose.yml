@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: dsvendas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # Sem publicação de porta para o host: o backend fala com o Postgres pela
+    # rede interna do compose (postgres:5432). Se quiser acessar o banco a
+    # partir do host para depuração, adicione um mapeamento de porta livre.
+    volumes:
+      - dsvendas-db:/var/lib/postgresql/data
+      # A app roda com spring.jpa.hibernate.ddl-auto=none no perfil "dev", ou
+      # seja, o schema não é criado automaticamente. Usamos os scripts de
+      # inicialização do próprio Postgres para criar as tabelas (create.sql)
+      # e popular alguns dados de exemplo (data.sql), na primeira subida.
+      - ./backend/create.sql:/docker-entrypoint-initdb.d/01-create.sql:ro
+      - ./backend/src/main/resources/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d dsvendas']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: on-failure
+    environment:
+      APP_PROFILE: dev
+      DB_URL: jdbc:postgresql://postgres:5432/dsvendas
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_BACKEND_URL: ''
+    restart: on-failure
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+volumes:
+  dsvendas-db:
