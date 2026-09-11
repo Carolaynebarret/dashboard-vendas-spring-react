@@ -74,6 +74,22 @@ npm start
 
 A aplicação sobe por padrão em `http://localhost:3000` e consome a API em `http://localhost:8080` (configurável via `REACT_APP_BACKEND_URL`).
 
+### Docker (back end + front end + PostgreSQL)
+
+Também é possível subir a stack completa com Docker, sem instalar Java, Node ou PostgreSQL localmente:
+
+```bash
+docker compose up --build
+```
+
+Isso sobe três serviços:
+
+- `postgres` — PostgreSQL 15, com o schema (`backend/create.sql`) e alguns dados de exemplo (`data.sql`) carregados automaticamente na primeira subida.
+- `backend` — API Spring Boot (perfil `dev`, conectada ao `postgres`), disponível em `http://localhost:8080`.
+- `frontend` — build de produção do React servido via Nginx em `http://localhost:3000`. O Nginx repassa as chamadas à API (`/sales`, `/sellers`) para o serviço `backend`, então não é preciso configurar `REACT_APP_BACKEND_URL`.
+
+Também existe um workflow de CI (`.github/workflows/ci.yml`) que roda `mvn test` (perfil `test`, com H2 em memória) e `npm run build` a cada push/PR.
+
 ## Instalação
 
 1. Clone o repositório.
