@@ -1,4 +1,4 @@
-# DSVendas — projeto-sds3
+# DSVendas
 
 ![Java](https://img.shields.io/badge/Java-11-orange?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7.18-6DB33F?logo=springboot&logoColor=white)
@@ -104,7 +104,7 @@ O projeto não possui nenhum teste de front end configurado até o momento (nenh
 ## Estrutura de pastas
 
 ```
-projeto-sds3/
+dashboard-vendas-spring-react/
 ├── backend/
 │   ├── src/main/java/com/devsuperior/dsvendas/
 │   │   ├── config/          # Configuração de segurança e CORS
